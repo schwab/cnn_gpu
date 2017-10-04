@@ -1,0 +1,97 @@
+ARG cuda_version=8.0
+ARG cudnn_version=6
+FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
+
+ENV CONDA_DIR /opt/conda
+ENV PATH $CONDA_DIR/bin:$PATH
+
+RUN mkdir -p $CONDA_DIR && \
+    echo export PATH=$CONDA_DIR/bin:'$PATH' > /etc/profile.d/conda.sh && \
+    apt-get update && \
+    apt-get install -y wget git libhdf5-dev g++ graphviz openmpi-bin && \
+    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh && \
+    echo "c59b3dd3cad550ac7596e0d599b91e75d88826db132e4146030ef471bb434e9a *Miniconda3-4.2.12-Linux-x86_64.sh" | sha256sum -c - && \
+    /bin/bash /Miniconda3-4.2.12-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
+    rm Miniconda3-4.2.12-Linux-x86_64.sh
+
+ENV NB_USER keras
+ENV NB_UID 1000
+
+RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown keras $CONDA_DIR -R && \
+    mkdir -p /src && \
+    chown keras /src
+
+
+# Python
+ARG python_version=3.6
+
+RUN conda install -y python=${python_version} && \
+    pip install --upgrade pip && \
+    pip install tensorflow-gpu && \
+    pip install https://cntk.ai/PythonWheel/GPU/cntk-2.1-cp35-cp35m-linux_x86_64.whl && \
+    conda install Pillow scikit-learn notebook pandas matplotlib mkl nose pyyaml six h5py && \
+    conda install theano pygpu bcolz && \
+    pip install sklearn_pandas && \
+    git clone git://github.com/fchollet/keras.git /src && pip install -e /src[tests] && \
+    pip install git+git://github.com/fchollet/keras.git && \
+    conda clean -yt
+RUN apt-get update && \
+        apt-get install -y \
+        build-essential \
+        cmake \
+        git \
+        wget \
+        unzip \
+        yasm \
+        pkg-config \
+        libswscale-dev \
+        libtbb2 \
+        libtbb-dev \
+        libjpeg-dev \
+        libpng-dev \
+        libtiff-dev \
+        libjasper-dev \
+        libavformat-dev \
+        libpq-dev
+
+RUN pip install numpy
+
+ENV PYTHONPATH='/src/:$PYTHONPATH'
+WORKDIR /
+RUN wget https://github.com/opencv/opencv/archive/3.3.0.zip \
+&& unzip 3.3.0.zip \
+&& mkdir /opencv-3.3.0/cmake_binary \
+&& cd /opencv-3.3.0/cmake_binary \
+&& cmake -DBUILD_TIFF=ON \
+  -DBUILD_opencv_java=OFF \
+  -DWITH_CUDA=ON \
+  -DENABLE_AVX=ON \
+  -DWITH_OPENGL=ON \
+  -DWITH_OPENCL=ON \
+  -DWITH_IPP=ON \
+  -DWITH_TBB=ON \
+  -DWITH_EIGEN=ON \
+  -DWITH_V4L=ON \
+  -DBUILD_TESTS=OFF \
+  -DBUILD_PERF_TESTS=OFF \
+  -DCMAKE_BUILD_TYPE=RELEASE \
+  -DCMAKE_INSTALL_PREFIX=$(python3.6 -c "import sys; print(sys.prefix)") \
+  -DPYTHON_EXECUTABLE=$(which python3.6) \
+  -DPYTHON_INCLUDE_DIR=$(python3.6 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+  -DPYTHON_PACKAGES_PATH=$(python3.6 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") .. \
+&& make install \
+&& rm /3.3.0.zip \
+&& rm -r /opencv-3.3.0
+
+USER keras
+ADD theanorc /home/keras/.theanorc
+
+
+WORKDIR /src
+
+EXPOSE 8888
+
+CMD jupyter notebook --port=8888 --ip=0.0.0.0
+

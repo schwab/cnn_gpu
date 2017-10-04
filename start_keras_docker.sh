@@ -1,0 +1,1 @@
+cd ./keras_src/docker && make SRC=/mnt/extradrive1/projects/pyimagesearch DATA=/mnt/extradrive1/projects/pyimagesearch/data bash
