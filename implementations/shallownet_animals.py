@@ -68,9 +68,9 @@ plt.plot(np.arange(0, 100), H.history["val_acc"], label="val_acc")
 plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
+plt.ioff()
 plt.legend()
-
-fig.savefig('/data/implementations/animals_results.png', bbox_inches="tight")
+fig.savefig('/src/workspace/data/animals_results.png', bbox_inches="tight")
 
 
 #plt.show()
