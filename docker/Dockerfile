@@ -1,20 +1,20 @@
-FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu14.04
+FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu16.04
 
 MAINTAINER Michael Schwab <mcstar@gmail.com>
 
 ARG THEANO_VERSION=rel-0.8.2
 ARG TENSORFLOW_VERSION=0.12.1
 ARG TENSORFLOW_ARCH=gpu
-ARG KERAS_VERSION=1.2.0
+ARG KERAS_VERSION=2.0.8
 ARG LASAGNE_VERSION=v0.1
 ARG TORCH_VERSION=latest
 ARG CAFFE_VERSION=master
 
-#RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
-#	cat /proc/driver/nvidia/version && \
-#	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
-#	nvcc -V && \
-#	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
+RUN echo -e "\n**********************\nNVIDIA Driver Version\n**********************\n" && \
+	cat /proc/driver/nvidia/version && \
+	echo -e "\n**********************\nCUDA Version\n**********************\n" && \
+	nvcc -V && \
+	echo -e "\n\nBuilding your Deep Learning Docker Image...\n"
 
 # Install some dependencies
 RUN apt-get update && apt-get install -y \
@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y \
 		liblcms2-dev \
 		libopenblas-dev \
 		liblapack-dev \
-		libopenjpeg2 \
 		libpng12-dev \
 		libssl-dev \
 		libtiff5-dev \
@@ -84,9 +83,9 @@ RUN apt-get update && apt-get install -y \
 	apt-get clean && \
 	apt-get autoremove && \
 	rm -rf /var/lib/apt/lists/* && \
-# Link BLAS library to use OpenBLAS using the alternatives mechanism (https://www.scipy.org/scipylib/building/linux.html#debian-ubuntu)
 	update-alternatives --set libblas.so.3 /usr/lib/openblas-base/libblas.so.3
 
+# Link BLAS library to use OpenBLAS using the alternatives mechanism (https://www.scipy.org/scipylib/building/linux.html#debian-ubuntu)
 # Install pip
 RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
 	python get-pip.py && \
@@ -105,11 +104,10 @@ RUN apt-get update && apt-get install -y \
 		python-scipy \
 		python-nose \
 		python-h5py \
-		python-skimage \
 		python-matplotlib \
 		python-pandas \
-		python-sklearn \
 		python-sympy \
+		python-pillow \
 		&& \
 	apt-get clean && \
 	apt-get autoremove && \
@@ -128,6 +126,8 @@ RUN pip --no-cache-dir install --upgrade ipython && \
 		sphinx \
 		wheel \
 		zmq \
+		scikit-learn \
+		scikit-image \
 		&& \
 	python -m ipykernel.kernelspec
 
@@ -192,10 +192,10 @@ RUN pip --no-cache-dir install git+git://github.com/Lasagne/Lasagne.git@${LASAGN
 
 
 # Install Torch
-RUN git clone https://github.com/torch/distro.git /root/torch --recursive && \
-	cd /root/torch && \
-	bash install-deps && \
-	yes no | ./install.sh
+#RUN git clone https://github.com/torch/distro.git /root/torch --recursive && \
+#	cd /root/torch && \
+#	bash install-deps && \
+#	yes no | ./install.sh
 
 # Export the LUA evironment variables manually
 ENV LUA_PATH='/root/.luarocks/share/lua/5.1/?.lua;/root/.luarocks/share/lua/5.1/?/init.lua;/root/torch/install/share/lua/5.1/?.lua;/root/torch/install/share/lua/5.1/?/init.lua;./?.lua;/root/torch/install/share/luajit-2.1.0-beta1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua' \
@@ -206,18 +206,18 @@ ENV LUA_PATH='/root/.luarocks/share/lua/5.1/?.lua;/root/.luarocks/share/lua/5.1/
 ENV LUA_CPATH='/root/torch/install/lib/?.so;'$LUA_CPATH
 
 # Install the latest versions of nn, cutorch, cunn, cuDNN bindings and iTorch
-RUN luarocks install nn && \
-	luarocks install cutorch && \
-	luarocks install cunn && \
-    luarocks install loadcaffe && \
-	\
-	cd /root && git clone https://github.com/soumith/cudnn.torch.git && cd cudnn.torch && \
-	git checkout R4 && \
-	luarocks make && \
-	\
-	cd /root && git clone https://github.com/facebook/iTorch.git && \
-	cd iTorch && \
-	luarocks make
+#RUN luarocks install nn && \
+#	luarocks install cutorch && \
+#	luarocks install cunn && \
+#    luarocks install loadcaffe && \
+#	\
+#	cd /root && git clone https://github.com/soumith/cudnn.torch.git && cd cudnn.torch && \
+#	git checkout R4 && \
+#	luarocks make && \
+#	\
+#	cd /root && git clone https://github.com/facebook/iTorch.git && \
+#	cd iTorch && \
+#	luarocks make
 
 # Install OpenCV
 RUN git clone --depth 1 https://github.com/opencv/opencv.git /root/opencv && \
@@ -231,10 +231,10 @@ RUN git clone --depth 1 https://github.com/opencv/opencv.git /root/opencv && \
 	echo 'ln /dev/null /dev/raw1394' >> ~/.bashrc
 
 # Set up notebook config
-COPY jupyter_notebook_config.py /root/.jupyter/
+#COPY jupyter_notebook_config.py /root/.jupyter/
 
 # Jupyter has issues with being run directly: https://github.com/ipython/ipython/issues/7062
-COPY run_jupyter.sh /root/
+#COPY run_jupyter.sh /root/
 
 # Expose Ports for TensorBoard (6006), Ipython (8888)
 EXPOSE 6006 8888
