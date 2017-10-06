@@ -70,7 +70,7 @@ plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.ioff()
 plt.legend()
-fig.savefig('/src/workspace/data/animals_results.png', bbox_inches="tight")
+fig.savefig('/root/src/data/animals_results.png', bbox_inches="tight")
 
 
 #plt.show()

@@ -181,7 +181,7 @@ RUN pip --no-cache-dir install git+git://github.com/Theano/Theano.git@${THEANO_V
 		\n[blas]\nldflag = -L/usr/lib/openblas-base -lopenblas \
 		\n[DebugMode]\ncheck_finite=1" \
 	> /root/.theanorc
-
+RUn pip install --upgrade tensorflow
 
 # Install Keras
 RUN pip --no-cache-dir install git+git://github.com/fchollet/keras.git@${KERAS_VERSION}
@@ -229,6 +229,7 @@ RUN git clone --depth 1 https://github.com/opencv/opencv.git /root/opencv && \
 	make install && \
 	ldconfig && \
 	echo 'ln /dev/null /dev/raw1394' >> ~/.bashrc
+RUN pip install --no-cache-dir imutils
 
 # Set up notebook config
 #COPY jupyter_notebook_config.py /root/.jupyter/
