@@ -63,7 +63,7 @@ plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend()
 plt.ioff()
-fig.savefig('/src/workspace/data/CIFAR-10_results.png', bbox_inches="tight")
+fig.savefig('/root/src/data/CIFAR-10_results.png', bbox_inches="tight")
 plt.show()
 
 
