@@ -1,11 +1,13 @@
 # import the necessary packages
-from cnn_gpu.nn.conv import LeNet
+from nn.conv.lenet import LeNet
 from keras.optimizers import SGD
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn import datasets
 from keras import backend as K
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -62,7 +64,7 @@ target_names=[str(x) for x in le.classes_]))
 
 # plot the training loss and accuracy
 plt.style.use("ggplot")
-plt.figure()
+fig = plt.figure()
 plt.plot(np.arange(0, 20), H.history["loss"], label="train_loss")
 plt.plot(np.arange(0, 20), H.history["val_loss"], label="val_loss")
 plt.plot(np.arange(0, 20), H.history["acc"], label="train_acc")
@@ -71,6 +73,9 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend()
+plt.ioff()
+fig.savefig('/root/src/data/lenet_mnist.png', bbox_inches="tight")
+
 plt.show()
 
 

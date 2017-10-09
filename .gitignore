@@ -2,3 +2,5 @@ datasets/animals
 datasets/SMILEsmileD
 *.pyc
 *.hdf5
+*.swo
+*.swp
