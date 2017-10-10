@@ -4,7 +4,7 @@ matplotlib.use("Agg")
 # import the necessary packages
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.metrics import classification_report
-from nn.conv import MiniVGGNet
+from nn.conv.minivggnet import MiniVGGNet
 from keras.callbacks import LearningRateScheduler
 from keras.optimzers import SGD
 from keras.datasets import cifar10
