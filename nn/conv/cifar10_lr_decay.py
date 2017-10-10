@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelBinarizer
 from sklearn.metrics import classification_report
 from nn.conv.minivggnet import MiniVGGNet
 from keras.callbacks import LearningRateScheduler
-from keras.optimzers import SGD
+from keras.optimizers import SGD
 from keras.datasets import cifar10
 
 import matplotlib.pyplot as plt
