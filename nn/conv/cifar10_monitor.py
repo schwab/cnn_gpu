@@ -6,9 +6,9 @@ import matplotlib
 matplotlib.use("Agg")
 
 # import the necessary packages
-from callbacks import TrainingMonitor
+from callbacks.training_monitor import TrainingMonitor
 from sklearn.preprocessing import LabelBinarizer
-from nn.conv import MiniVGGNet
+from nn.conv.minivggnet import MiniVGGNet
 from keras.optimizers import SGD
 from keras.datasets import cifar10
 import argparse
@@ -54,4 +54,3 @@ callbacks = [TrainingMonitor(figPath, jsonPath=jsonPath)]
 print("[INFO] training network...")
 model.fit(trainX, trainY, validation_data=(testX, testY),\
     batch_size=64, epochs=100, callbacks=callbacks, verbose=1)
-    
