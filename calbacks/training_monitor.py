@@ -30,4 +30,25 @@ class TrainingMonitor(BaseLogger):
         # to file
         if self.jsonPath is not None:
             f = open(self.jsonPath, "w")
+            f.write(json.dumps(self.H))
+            f.close()
+        # (epoch starts at zero)
+        if len(self.H["loss"]) > 1:
+            # plot the training loss and accuracy
+            N = np.arange(0, len(self.H["loss"]))
+            plt.style.use("ggplot")
+            plt.figure()
+            plt.plot(N, self.H["loss"], label="train_loss")
+            plt.plot(N, self.H["val_loss"], label="val_loss")
+            plt.plot(N, self.H["acc"], label="train_acc")
+            plt.plot(N, self.H["val_acc"], label="val_acc")
+            plt.title("Training Loss and Accuracy [Epoch {}]".format(
+            len(self.H["loss"])))
+            plt.xlabel("Epoch #")
+            plt.ylabel("Loss/Accuracy")
+            plt.legend()
+            # save the figure
+            plt.savefig(self.figPath)
+            plt.close()
+        
     
