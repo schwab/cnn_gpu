@@ -20,13 +20,17 @@ class TrainingMonitor(BaseLogger):
                 if self.startAt > 0:
                     for k in self.H.keys():
                         self.H[k] = self.H[k][:self.startAt]
+    
     def on_epoch_end(self, epoch, logs={}):
+        """
+        At end of each epoch, update the history.
+        """
         # loop over the logs and updte the loss, accuracy etc
         # for the entire training process
         for (k, v) in logs.items():
             l = self.H.get(k, [])
             l.append(v)
-            self.H[k] = 1
+            self.H[k] = l
         # to file
         if self.jsonPath is not None:
             f = open(self.jsonPath, "w")
