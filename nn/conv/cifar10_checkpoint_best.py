@@ -32,8 +32,8 @@ model.compile(loss="categorical_crossentropy", optimizer=opt,
 
 # construct the callback to save only the *best* model to disk
 # based on the validation loss
-fname = os.path.sep.join([args["weights"],
-    "weights-{epoch:03d}-{val_loss:.4f}.hdf5"])
+#fname = os.path.sep.join([args["weights"],
+#    "weights-{epoch:03d}-{val_loss:.4f}.hdf5"])
 checkpoint = ModelCheckpoint(arg["weights"], monitor="val_loss",
     save_best_only=True, verbose=1)
 callbacks = [checkpoint]
