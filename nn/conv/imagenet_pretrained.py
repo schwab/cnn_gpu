@@ -14,7 +14,7 @@ import cv2
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", required=True, 
     help="path to the input image")
-ap.add_argument("-model", "--model", type=str, target="vgg16", \
+ap.add_argument("-model", "--model", type=str, default="vgg16", \
     help="name of the pre-trained network to use")
 args = vars(ap.parse_args())
 
